@@ -11,20 +11,20 @@ module.exports = {
       idUser: {
         type: Sequelize.INTEGER,
         references: {
-          model: "user",
-          key: "id"
+          model: "users",
+          key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       idBook: {
         type: Sequelize.INTEGER,
         references: {
           model: "books",
-          key: "id"
+          key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,

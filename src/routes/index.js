@@ -8,6 +8,8 @@ const { addUsers, getUsers, getUser, updateUser, deleteUser } = require('../cont
 
 const { addBook, getBooks, getBook, updateBook, deleteBook } = require('../controllers/book');
 
+const { getTransactions } = require('../controllers/transaction');
+
 // Route User
 router.post('/user', addUsers);
 router.get('/users', getUsers);
@@ -20,6 +22,9 @@ router.post('/book', addBook);
 router.get('/books', getBooks);
 router.get('/book/:id', getBook);
 router.patch('/book/:id', updateBook);
-router.delete('/book/:id', deleteBook)
+router.delete('/book/:id', deleteBook);
+
+//Route Transaction
+router.get('/transactions', getTransactions);
 
 module.exports = router;

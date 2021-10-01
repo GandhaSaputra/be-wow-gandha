@@ -8,9 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      users: {
-        type: Sequelize.JSON
-      },
       transferProof: {
         type: Sequelize.STRING
       },

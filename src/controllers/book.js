@@ -2,7 +2,6 @@
 const { books, user } = require('../../models');
 
 exports.getBooks = async (req, res) => {
-  // code here
   try {
     const data = await books.findAll({
       include: {
@@ -19,7 +18,9 @@ exports.getBooks = async (req, res) => {
 
     res.send({
       status: 'success',
-      data,
+      data: {
+        books: data
+      }
     });
   } catch (error) {
     console.log(error);
@@ -31,7 +32,6 @@ exports.getBooks = async (req, res) => {
 };
 
 exports.getBook = async (req, res) => {
-    // code here
     try {
         const { id } = req.params;
     
@@ -67,7 +67,6 @@ exports.getBook = async (req, res) => {
 };
 
 exports.addBook = async (req, res) => {
-  // code here
   try {
     const data = req.body;
 

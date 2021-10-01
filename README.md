@@ -1,1 +1,1 @@
-# Membuat Users controllers, routes, db table and migration
+# Selesai Membuat controllers book, migrations dan models serta relasi ke user

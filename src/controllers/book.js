@@ -1,11 +1,11 @@
 // import models here
-const { books, user } = require('../../models');
+const { books, users } = require('../../models');
 
 exports.getBooks = async (req, res) => {
   try {
     const data = await books.findAll({
       include: {
-        model: user,
+        model: users,
         as: 'user',
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'password'],
@@ -40,14 +40,14 @@ exports.getBook = async (req, res) => {
             id,
           },
           include: {
-            model: user,
+            model: users,
             as: "user",
             attributes: {
-              exclude: ["createdAt", "updatedAt", "idUser"],
+              exclude: ['createdAt', 'updatedAt', 'password'],
             },
           },
           attributes: {
-            exclude: ["password", "createdAt", "updatedAt"],
+            exclude: ['createdAt', 'updatedAt', 'idUser'],
           },
         });
     

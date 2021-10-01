@@ -1,8 +1,8 @@
-const { user } = require('../../models');
+const { users, profile, books, transaction } = require('../../models');
 
 exports.addUsers = async (req, res) => {
   try {
-    await user.create(req.body);
+    await users.create(req.body);
 
     res.send({
       status: 'success',
@@ -19,7 +19,14 @@ exports.addUsers = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await user.findAll({
+    const user = await users.findAll({
+      include: {
+        model: profile,
+        as: "profile",
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "idUser"],
+        }
+      },
       attributes: {
         exclude: ['password', 'createdAt', 'updatedAt'],
       },
@@ -28,7 +35,7 @@ exports.getUsers = async (req, res) => {
     res.send({
       status: 'success',
       data: {
-        users,
+        user,
       },
     });
   } catch (error) {
@@ -44,7 +51,7 @@ exports.getUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await user.findAll({
+    const data = await users.findAll({
       where: {
         id,
       },
@@ -72,7 +79,7 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await user.update(req.body, {
+    await users.update(req.body, {
       where: {
         id,
       },
@@ -104,7 +111,7 @@ exports.deleteUser = async (req, res) => {
     //   })
     // }
 
-    await user.destroy({
+    await users.destroy({
       where: {
         id,
       },
@@ -125,3 +132,68 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
+
+exports.getUserBooks = async (req, res) => {
+  try {
+    const data = await users.findAll({
+      where: {
+        role: "admin"
+      },
+      include: {
+        model: books,
+        as: "books",
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "idUser"],
+        }
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      }
+    })
+
+    res.send({
+      status: "success",
+      data: {
+        users: data
+      }
+    })
+    
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 'failed',
+      message: 'Server Error',
+    });
+  }
+}
+
+exports.getUserTransactions = async (req, res) => {
+  try {
+    const data = await users.findAll({
+      include: {
+        model: transaction,
+        as: "transactions",
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "idUser"],
+        }
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password", "email"],
+      }
+    })
+
+    res.send({
+      status: "success",
+      data: {
+        users: data
+      }
+    })
+    
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 'failed',
+      message: 'Server Error',
+    });
+  }
+}

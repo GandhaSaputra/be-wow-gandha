@@ -1,1 +1,1 @@
-# Selesai membuat Controllers Transaction dan selesai membuat semua relasi table
+# Selesai membuat sistem auth dan membuat multer untuk upload file gambar buku, perlu merapikan code

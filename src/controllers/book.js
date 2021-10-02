@@ -3,7 +3,7 @@ const { books, users, category, categorybooks} = require('../../models');
 
 exports.getBooks = async (req, res) => {
   try {
-    const data = await books.findAll({
+    let data = await books.findAll({
       include: [
         {
           model: users,
@@ -27,6 +27,15 @@ exports.getBooks = async (req, res) => {
       attributes: {
         exclude: ['createdAt', 'updatedAt', 'idUser'],
       },
+    });
+
+    data = JSON.parse(JSON.stringify(data));
+
+    data = data.map((item) => {
+      return {
+        ...item,
+        bookFile: process.env.FILE_PATH + item.bookFile,
+      }
     });
 
     res.send({
@@ -81,14 +90,49 @@ exports.getBook = async (req, res) => {
 
 exports.addBook = async (req, res) => {
   try {
-    const data = req.body;
+    const {category: categoryName, ...data} = req.body;
 
-    await books.create(data);
+    const newBook = await books.create({
+      ...data,
+      bookFile: req.file.filename,
+      idUser: req.user.id
+    });
+
+    const categoryData = await category.findOne({
+      where: {
+        name: categoryName
+      },
+    });
+
+    if (categoryData) {
+      await categorybooks.create({
+        idBook: newBook.id,
+        idCategory: categoryData.id,
+      });
+    } else {
+      const newCategory = await category.create({name: categoryName});
+      await categorybooks.create({
+        idBook: newBook.id,
+        idCategory: newCategory.id,
+      });
+    }
+
+    let bookData = await books.findOne({
+      where: {
+        id: newBook.id,
+      },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      },
+    });
 
     res.send({
       status: 'success',
-      data,
-    });
+      data: {
+        ...bookData.dataValues,
+      }
+    })
+
   } catch (error) {
     console.log(error);
     res.send({

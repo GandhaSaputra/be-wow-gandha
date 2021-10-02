@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 
 const router = express.Router();
@@ -10,6 +11,12 @@ const { addBook, getBooks, getBook, updateBook, deleteBook } = require('../contr
 
 const { getTransactions, addTransaction, getTransaction, updateTransaction } = require('../controllers/transaction');
 
+const { register, login } = require('../controllers/auth');
+
+const { auth } = require('../middlewares/auth');
+
+const { uploadFile } = require('../middlewares/uploadFile')
+
 // Route User
 router.post('/user', addUsers);
 router.get('/users', getUsers);
@@ -21,16 +28,22 @@ router.get('/user-books', getUserBooks);
 router.get('/user-transactions', getUserTransactions);
 
 //Route Book
-router.post('/book', addBook);
-router.get('/books', getBooks);
-router.get('/book/:id', getBook);
-router.patch('/book/:id', updateBook);
-router.delete('/book/:id', deleteBook);
+router.post('/book', auth, uploadFile('bookFile'), addBook);
+router.get('/books', auth, getBooks);
+router.get('/book/:id', auth, getBook);
+router.patch('/book/:id', auth, updateBook);
+router.delete('/book/:id', auth, deleteBook);
 
 //Route Transaction
-router.get('/transactions', getTransactions);
-router.get('/transaction/:id', getTransaction);
-router.post('/transaction', addTransaction);
-router.patch('/transaction/:id', updateTransaction);
+router.get('/transactions', auth, getTransactions);
+router.get('/transaction/:id', auth, getTransaction);
+router.post('/transaction', auth, addTransaction);
+router.patch('/transaction/:id', auth, updateTransaction);
+
+//Router Register
+router.post('/register', register);
+
+//Route Login
+router.post('/login', login);
 
 module.exports = router;

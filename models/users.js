@@ -28,6 +28,14 @@ module.exports = (sequelize, DataTypes) => {
           name: "idUser",
         }
       });
+      user.belongsToMany(models.books, {
+        as: "userBooks",
+        through: {
+          model: "userBookList",
+          as: "bridge",
+        },
+        foreignKey: "idUser",
+      });
     }
   };
   user.init({

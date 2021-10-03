@@ -37,7 +37,7 @@ router.delete('/book/:id', auth, deleteBook);
 //Route Transaction
 router.get('/transactions', auth, getTransactions);
 router.get('/transaction/:id', auth, getTransaction);
-router.post('/transaction', auth, addTransaction);
+router.post('/transaction', auth, uploadFile('transferProof'), addTransaction);
 router.patch('/transaction/:id', auth, updateTransaction);
 
 //Router Register

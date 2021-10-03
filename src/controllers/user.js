@@ -38,6 +38,13 @@ exports.getUsers = async (req, res) => {
           attributes: {
             exclude: ["createdAt", "updatedAt", "publicationDate", "author", "isbn", "bookFile", "idUser", "id"]
           }
+        },
+        {
+          model: transaction,
+          as: "transaction",
+          attributes : {
+            exclude: ["createdAt", "updatedAt"]
+          }
         }
       ],
       attributes: {

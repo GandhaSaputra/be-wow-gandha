@@ -92,6 +92,13 @@ exports.addBook = async (req, res) => {
   try {
     const {category: categoryName, ...data} = req.body;
 
+    if(req.user.id != 1){
+      return res.send({
+        status: "Failed",
+        message: "Only admin can add book"
+      })
+    }
+
     const newBook = await books.create({
       ...data,
       bookFile: req.file.filename,
@@ -145,6 +152,13 @@ exports.addBook = async (req, res) => {
 exports.updateBook = async (req, res) => {
     try {
       const { id } = req.params;
+
+      if(req.user.id != 1){
+        return res.send({
+          status: "Failed",
+          message: "Only admin can update book"
+        })
+      }
   
       await books.update(req.body, {
         where: {

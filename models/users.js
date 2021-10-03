@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
           name: "idUser",
         }
       });
+      user.hasOne(models.transaction, {
+        as: "transaction",
+        foreignKey: {
+          name: "idUser"
+        }
+      });
       user.hasMany(models.books, {
         as: "books",
         foreignKey: {

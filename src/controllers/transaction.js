@@ -4,6 +4,13 @@ const { users, transaction } = require('../../models')
 exports.getTransactions = async (req, res) => {
     try {
 
+        if(req.user.id != 1){
+            return res.send({
+              status: "Failed",
+              message: "Only admin can view transactions"
+            })
+          }
+
         const data = await transaction.findAll({
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'idUser']
@@ -74,15 +81,32 @@ exports.getTransaction = async (req, res) => {
 
 exports.addTransaction = async (req, res) => {
     try {
-        const data = req.body
+        // const {data} = req.body
 
-        await transaction.create(data)
+
+        if(req.user.id != req.body.idUser){
+            return res.send({
+              status: "Failed",
+              message: "Cannot add transaction"
+            })
+          }
+
+        const newTransaction = await transaction.create({
+            // ...data,
+            idUser: req.body.idUser,
+            transferProof: req.file.filename,
+            remainingActive: 0,
+            userStatus: "Not Active",
+            paymentStatus: "Pending"
+        })
 
         res.send({
             status: 'success',
             message: 'Add transaction finished',
             data: {
-                transaction: req.body,
+                transaction: {
+                    ...newTransaction.dataValues
+                }
             }
         })
 
@@ -98,10 +122,40 @@ exports.addTransaction = async (req, res) => {
 exports.updateTransaction = async (req, res) => {
     try {
       const { id } = req.params;
+
+      if(req.user.id != 1){
+        return res.send({
+          status: "Failed",
+          message: "Only admin can update book"
+        })
+      }
   
-      await transaction.update(req.body, {
+      await transaction.update(
+          {
+            remainingActive: 30,
+            userStatus: "Active",
+            paymentStatus: req.body.paymentStatus,
+          },
+          {
+            where: {
+            id,
+            },
+          }
+      );
+
+      const newTransaction = await transaction.findOne({
         where: {
-          id,
+          id
+        },
+        include: {
+            model: users,
+            as: "user",
+            attributes: {
+              exclude: ['createdAt', 'updatedAt', 'password', 'email', 'role'],
+            },
+        },
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'idUser']
         },
       });
   
@@ -109,7 +163,9 @@ exports.updateTransaction = async (req, res) => {
         status: "success",
         message: `Update transaction id: ${id} finished`,
         data: {
-            transaction: req.body
+            transaction: {
+                ...newTransaction.dataValues
+            }
         }
       });
     } catch (error) {
